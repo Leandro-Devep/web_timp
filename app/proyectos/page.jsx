@@ -1,8 +1,8 @@
   "use client";
 
   import React, { useEffect, useState, useMemo } from "react";
-  import ProjectCard from "@/components/ProjectCard";
-  import styles from "@/css/proyectos.module.css";
+  import ProjectCard from "../../components/ProjectCard";
+  import styles from "../../css/proyectos.module.css";
 
   export default function ProyectosPage() {
     const [projects, setProjects] = useState([]);

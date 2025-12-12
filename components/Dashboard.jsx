@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useMemo, useEffect, useState } from "react";
-import styles from "@/css/dashboard.module.css";
+import styles from "../css/dashboard.module.css";
 import * as echarts from "echarts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";

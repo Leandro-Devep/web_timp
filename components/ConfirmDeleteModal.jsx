@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/css/confirmDelete.module.css";
+import styles from "../css/confirmDelete.module.css";
 import { X } from "lucide-react";
 
 export default function ConfirmDeleteModal({ open, onClose, material, onConfirm }) {

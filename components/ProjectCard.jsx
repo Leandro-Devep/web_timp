@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import styles from "@/css/proyectos.module.css";
+import styles from "../css/proyectos.module.css";
 
 const ProjectCard = ({ project }) => {
   const {

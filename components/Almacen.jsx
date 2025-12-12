@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import styles from "@/css/almacen.module.css";
+import styles from "../css/almacen.module.css";
 
 import AddMaterialModal from "./AddMaterialModal";
 import EditMaterialModal from "./EditMaterialModal";
@@ -302,17 +302,15 @@ export default function Almacen() {
         onSaved={fetchMateriales}
       />
 
-      {editModalOpen && materialToEdit && (
-  <EditMaterialModal
-    open={true}
-    material={materialToEdit}
-    onClose={() => {
-      setEditModalOpen(false);
-      setMaterialToEdit(null);
-    }}
-    onSaved={fetchMateriales}
-  />
-)}
+     <EditMaterialModal
+  open={editModalOpen}
+  material={materialToEdit}
+  onClose={() => {
+    setEditModalOpen(false);
+    setMaterialToEdit(null);
+  }}
+  onSaved={fetchMateriales}
+   />
 
 
       {/* MODAL ELIMINAR */}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LayoutDashboard, Boxes, FolderKanban } from "lucide-react";
-import styles from "@/css/Navbar.module.css";
+import styles from "../css/Navbar.module.css";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 

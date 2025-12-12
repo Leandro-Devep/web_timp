@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "@/css/almacenModal.module.css";
+import styles from "../css/almacenModal.module.css";
 import { X, Plus } from "lucide-react";
 
 export default function AddMaterialModal({ open, onClose, onSaved }) {
-  if (!open) return null;
 
   // ================================
   // 🔗 API REAL DE TU BACKEND
@@ -16,7 +15,7 @@ export default function AddMaterialModal({ open, onClose, onSaved }) {
   const API_TIPOS = process.env.NEXT_PUBLIC_API_URL + "/api/tipos";
 
   // ================================
-  // FORM DATA
+  // FORM DATA (HOOKS SIEMPRE ARRIBA)
   // ================================
   const [nombre, setNombre] = useState("");
   const [cantidad, setCantidad] = useState("");
@@ -63,8 +62,13 @@ export default function AddMaterialModal({ open, onClose, onSaved }) {
   };
 
   useEffect(() => {
-    fetchConfig();
-  }, []);
+    if (open) fetchConfig();
+  }, [open]);
+
+  // ================================
+  // ⛔ SALIDA SEGURA (DESPUÉS DE HOOKS)
+  // ================================
+  if (!open) return null;
 
   // ================================
   // ⭐ PREVIEW IMAGEN
@@ -179,8 +183,6 @@ export default function AddMaterialModal({ open, onClose, onSaved }) {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        
-        {/* BOTÓN CERRAR */}
         <button className={styles.closeBtn} onClick={onClose}>
           <X size={22} />
         </button>

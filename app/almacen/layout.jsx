@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
+import Navbar from "../../components/Navbar";
 import "./layout.css";
 
 export default function AlmacenLayout({ children }) {
