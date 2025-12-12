@@ -1,0 +1,188 @@
+/* =========================================================
+   FONDO BLUR
+========================================================= */
+
+.login-background {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-background::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/fondodeltimpweb.png");
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px);
+  transform: scale(1.15);
+  z-index: -2;
+}
+
+.login-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: -1;
+}
+
+/* =========================================================
+   ANIMACIÓN DE APARICIÓN
+========================================================= */
+
+.fade-in {
+  animation: fadeIn 1s ease forwards;
+  opacity: 0;
+}
+
+.pop-in {
+  animation: popIn 0.8s ease forwards;
+  opacity: 0;
+  transform: translateY(40px) scale(0.97);
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   TARJETA LOGIN
+========================================================= */
+
+.login-card {
+  width: 380px;
+  padding: 40px 30px;
+  background: rgba(0, 40, 100, 0.55);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.45);
+  position: relative;
+}
+
+.login-logo {
+  width: 120px;
+  margin: 0 auto 10px;
+}
+
+.login-title {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* =========================================================
+   INPUTS AZUL CRISTAL ELEGANTE
+========================================================= */
+
+.animated-input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border-radius: 25px;
+  border: 1px solid rgba(140, 180, 255, 0.35);
+  background: rgba(10, 30, 70, 0.35);
+  backdrop-filter: blur(12px);
+  color: #e8f0ff;
+  transition: all 0.25s ease;
+}
+
+.animated-input::placeholder {
+  color: #b9c7e8;
+}
+
+.animated-input:hover,
+.animated-input:focus {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 20px rgba(40, 130, 255, 0.4);
+  background: rgba(20, 40, 90, 0.55);
+  border-color: rgba(160, 200, 255, 0.6);
+}
+
+/* =========================================================
+   BOTÓN EFECTO AGUA
+========================================================= */
+
+.water-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(120deg, #0a1a38, #14326c);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.water-btn::before {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -50%;
+  width: 200%;
+  height: 300%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4), transparent 70%);
+  transform: rotate(25deg);
+  transition: 0.5s;
+  opacity: 0;
+}
+
+.water-btn:hover::before {
+  top: -30%;
+  opacity: 1;
+}
+
+.water-btn:hover {
+  background: linear-gradient(120deg, #10244a, #194182);
+}
+
+/* =========================================================
+   TEXTOS Y ERRORES
+========================================================= */
+
+.login-terms {
+  color: #cbd3e8;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.login-link {
+  color: #8fb1ff;
+  text-decoration: underline;
+}
+
+.error {
+  color: #ff8181;
+  font-size: 12px;
+}
+
+/* Spinner */
+.spinner {
+  border: 3px solid #ffffff50;
+  border-top: 3px solid white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

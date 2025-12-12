@@ -1,0 +1,156 @@
+/* ============================
+   NAVBAR LATERAL
+============================ */
+.navbar {
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background: linear-gradient(180deg, #07112a 0%, #0e1b3d 100%);
+  color: #e6eefc;
+
+  box-shadow: 4px 0 30px rgba(2, 6, 23, 0.7);
+  z-index: 999;
+}
+
+/* ============================
+   LOGO + GLOW
+============================ */
+.brandWrap {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logoImg {
+  object-fit: contain;
+}
+
+.logoGlow {
+  width: 100%;
+  height: 5px;
+  margin: 12px auto 0 auto;
+
+  /* 🔵 Línea azul bien visible */
+  background: linear-gradient(
+    to right,
+    rgba(0, 120, 255, 0) 0%,
+    rgba(0, 150, 255, 0.85) 50%,
+    rgba(0, 120, 255, 0) 100%
+  );
+
+  /* 🔥 Glow suave pero visible */
+  filter: blur(2px);
+  opacity: 1;
+  border-radius: 20px;
+}
+
+/* ============================
+   MENÚ
+============================ */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  position: relative;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #cdd4ff;
+  transition: transform .18s ease, box-shadow .18s;
+  position: relative;
+  z-index: 1;
+}
+
+.link:hover {
+  transform: translateX(6px);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  color: #b8c9ff;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+/* Fondo animado de item activo */
+.item::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 0%;
+  background: linear-gradient(180deg, #2A3DA8, #00A2FF);
+  z-index: 0;
+  transition: height .45s cubic-bezier(.2, .9, .2, 1);
+  border-radius: 12px;
+  opacity: 0.95;
+}
+
+.item.active::before {
+  height: 100%;
+}
+
+.item.active .link {
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(42, 61, 168, 0.28);
+}
+
+/* ============================
+   USUARIO 
+============================ */
+.user {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+}
+
+.userInfo {
+  font-size: 0.85rem;
+  color: #cdd4ff;
+}
+
+.userName {
+  font-weight: 600;
+}
+
+.userEmail {
+  color: #9fb0e6;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}

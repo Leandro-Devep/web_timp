@@ -1,0 +1,44 @@
+/* ===============================
+   LAYOUT PRINCIPAL ALMACÉN
+================================ */
+
+.almacen-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #0a1128; 
+}
+
+
+/* ===============================
+   NAVBAR (lado izquierdo)
+================================ */
+
+.almacen-layout > aside {
+  width: 260px !important;
+  min-width: 260px !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+
+
+
+/* ===============================
+   CONTENIDO PRINCIPAL (a la derecha)
+================================ */
+
+.almacen-content {
+  margin-left: 260px;      /* ⬅ SEPARACIÓN EXACTA DEL NAVBAR */
+  padding: 20px 35px;
+  width: calc(100% - 260px);
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+
+  background: url("/fondodeltimpweb.png") center/cover no-repeat;
+  backdrop-filter: blur(40px);
+}

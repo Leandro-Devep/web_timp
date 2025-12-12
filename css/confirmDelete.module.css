@@ -1,0 +1,108 @@
+/* Fondo oscuro */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s ease-out;
+  z-index: 9999;
+}
+
+/* Modal */
+.modal {
+  background: #0f172a;
+  width: 380px;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+  animation: scaleIn 0.25s ease;
+  position: relative;
+  color: white;
+  text-align: center;
+}
+
+/* Botón Cerrar */
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+/* Título */
+.title {
+  font-size: 22px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Texto principal */
+.text {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 5px;
+}
+
+.materialName {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #38bdf8;
+}
+
+/* Input */
+.input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* Botones */
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 10px;
+  background: #475569;
+  border: none;
+  border-radius: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+.deleteBtn {
+  flex: 1;
+  padding: 10px;
+  background: #dc2626;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.deleteBtn:hover {
+  background: #b91c1c;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

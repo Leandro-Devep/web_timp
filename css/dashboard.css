@@ -1,0 +1,55 @@
+/* ============================================================
+   🔵 LAYOUT GENERAL: NAVBAR IZQUIERDA + CONTENIDO DERECHA
+   ============================================================ */
+.dashboard-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden !important;
+
+  /* 🔥 Fondo real (solo uno) */
+  background: url("/fondodeltimpweb.png") center/cover no-repeat;
+}
+
+/* 🔥 Capa de blur + oscurecido suave sobre el fondo */
+.dashboard-layout::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(40px);
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 0;
+}
+
+/* ============================================================
+   🔵 NAVBAR FIJA A LA IZQUIERDA
+   ============================================================ */
+.dashboard-layout > :first-child {
+  width: 220px;
+  flex-shrink: 0;
+
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+
+  z-index: 10; /* navbar por encima del blur */
+}
+
+/* ============================================================
+   🔵 CONTENIDO DEL DASHBOARD (derecha)
+   ============================================================ */
+.dashboard-content {
+  flex: 1;
+
+  padding: 30px 40px;
+  box-sizing: border-box;
+
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden !important;
+
+  position: relative;
+  z-index: 2; /* por encima del fondo y blur */
+}

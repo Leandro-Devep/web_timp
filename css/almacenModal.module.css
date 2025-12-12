@@ -1,0 +1,198 @@
+/* =========================
+   OVERLAY DEL MODAL
+========================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* =========================
+   CONTENEDOR DEL MODAL
+========================= */
+.modal {
+  width: 60%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #111829;
+  border-radius: 16px;
+  padding: 28px 38px;
+  animation: slideUp 0.35s ease-out;
+  box-shadow: 0px 6px 20px rgba(0,0,0,0.4);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(25px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Scroll */
+.modal::-webkit-scrollbar {
+  width: 8px;
+}
+.modal::-webkit-scrollbar-thumb {
+  background: #2e4a7f;
+  border-radius: 30px;
+}
+
+/* =========================
+   TITULO
+========================= */
+.title {
+  color: #fff;
+  font-size: 26px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  float: right;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.closeBtn:hover {
+  color: #ff5a5a;
+}
+
+/* =========================
+   FORM
+========================= */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Labels (LOCAL CLASS) */
+.formLabel {
+  color: #dce4ff;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* Inputs & Selects (LOCAL CLASS) */
+.formInput {
+  width: 100%;
+  background: #0f1623;
+  border: 1px solid #2a3d67;
+  color: #e2e8ff;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.formInput:focus {
+  border-color: #4b77ff;
+  box-shadow: 0 0 6px rgba(75, 119, 255, 0.4);
+}
+
+/* =========================
+   ROWS
+========================= */
+.row2,
+.row3 {
+  display: grid;
+  gap: 14px;
+}
+
+.row2 {
+  grid-template-columns: 1fr 180px;
+}
+
+.row3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.newBox {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.addBtnSmall {
+  background: #1f64ff;
+  border: none;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.addBtnSmall:hover {
+  background: #3a7bff;
+  transform: scale(1.05);
+}
+
+/* =========================
+   PREVIEW IMAGEN
+========================= */
+.previewBox {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.previewImage {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #304b7a;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* =========================
+   BOTONES
+========================= */
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancelBtn {
+  background: #2b3448;
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.cancelBtn:hover {
+  background: #3a455d;
+}
+
+.saveBtn {
+  background: #11cc4b;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+}
+.saveBtn:hover {
+  background: #19e75c;
+  transform: scale(1.03);
+}

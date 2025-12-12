@@ -1,0 +1,28 @@
+/* =================================================================
+// archivo: css/globals.css (RESET CORREGIDO)
+// ================================================================= */
+
+:root {
+  --dark-blue: #123057;
+  --medium-blue: #10264b;
+  --light-blue: #3B82F6;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  height: auto;        /* 🔥 ANTES causaba doble scroll */
+  overflow: auto;      /* 🔥 Permite scroll normal */
+  background-color: #0a1128;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.layout-content {
+  margin-left: 0 !important;
+}
+

@@ -1,0 +1,19 @@
+/* === Corrige el desplazamiento real junto al navbar === */
+
+.almacen-page {
+  margin-left: 260px;           /* ancho exacto de tu navbar */
+  padding: 20px 30px;
+  min-height: 100vh;
+  position: relative;
+  color: white;
+}
+
+/* === Fondo borroso azul igual que Dashboard === */
+.almacen-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("/fondodeltimpweb.png") center/cover no-repeat;
+  filter: blur(40px);
+  z-index: -1;
+}
