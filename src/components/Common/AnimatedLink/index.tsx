@@ -11,22 +11,8 @@ type AnimationProps = {
     transition: {
       duration: number;
       ease: number[];
-      type: string;
     };
   };
-};
-
-const titleAnimation = {
-  rest: {
-    transition: {
-      staggerChildren: 0.005,
-    },
-  },
-  hover: {
-    transition: {
-      staggerChildren: 0.005,
-    },
-  },
 };
 
 const letterAnimation = {
@@ -38,7 +24,6 @@ const letterAnimation = {
     transition: {
       duration: 0.3,
       ease: [0.6, 0.01, 0.05, 0.95],
-      type: 'tween',
     },
   },
 };
@@ -52,7 +37,6 @@ const letterAnimationTwo = {
     transition: {
       duration: 0.3,
       ease: [0.6, 0.01, 0.05, 0.95],
-      type: 'tween',
     },
   },
 };
