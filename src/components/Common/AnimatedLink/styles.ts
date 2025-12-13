@@ -1,6 +1,7 @@
 'use client';
+
+import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { styled } from 'styled-components';
 
 export const Div = styled(motion.div)`
   position: relative;
@@ -13,6 +14,7 @@ export const Div = styled(motion.div)`
 export const Word = styled(motion.span)`
   white-space: nowrap;
   position: relative;
+  display: inline-flex;
 `;
 
 export const Span = styled(motion.span)`
@@ -33,4 +35,5 @@ export const Span = styled(motion.span)`
 export const AbsoluteContainer = styled.div`
   position: absolute;
   top: 0;
+  left: 0;
 `;
