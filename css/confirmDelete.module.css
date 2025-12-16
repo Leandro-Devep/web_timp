@@ -106,3 +106,76 @@
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* ERROR INPUT */
+.inputError {
+  border: 2px solid #ff4d4d;
+  animation: glowRed 0.4s ease;
+}
+
+@keyframes glowRed {
+  0% { box-shadow: 0 0 0 rgba(255,77,77,0); }
+  100% { box-shadow: 0 0 12px rgba(255,77,77,0.6); }
+}
+
+/* TEXTO ERROR */
+.errorText {
+  margin-top: 6px;
+  color: #ff4d4d;
+  font-size: 13px;
+  animation: fadeIn 0.3s ease;
+}
+
+/* SHAKE */
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+/* CERRAR MODAL */
+.closing {
+  animation: closeModal 0.3s forwards;
+}
+
+@keyframes closeModal {
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* FADE */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.shake {
+  animation: shake 0.35s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.inputError {
+  border: 1px solid #ff4d4d;
+}
+
+.errorText {
+  color: #ff4d4d;
+  font-size: 13px;
+  margin-top: 6px;
+}
+

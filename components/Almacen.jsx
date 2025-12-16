@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import styles from "../css/almacen.module.css";
 
 import AddMaterialModal from "./AddMaterialModal";
@@ -39,7 +39,7 @@ export default function Almacen() {
   // ================================
   const fetchMateriales = async () => {
     try {
-      const res = await fetch(API_URL);
+      const res = await fetch(API_URL, { cache: "no-store" });
       const data = await res.json();
       setMateriales(data);
       setLoading(false);
@@ -57,7 +57,7 @@ export default function Almacen() {
   // ================================
   const openDropdown = (event, setter) => {
     event.stopPropagation();
-    const rect = event.target.getBoundingClientRect();
+    const rect = event.currentTarget.getBoundingClientRect();
 
     document.documentElement.style.setProperty("--dropdown-x", rect.left + "px");
     document.documentElement.style.setProperty("--dropdown-y", rect.bottom + 8 + "px");
@@ -80,58 +80,60 @@ export default function Almacen() {
   }, []);
 
   // ================================
-  // AGRUPAR POR CATEGORÍA Y SUBCATEGORÍA
+  // AGRUPAR POR CATEGORÍA
   // ================================
   const groupByCategoria = () => {
     const grupo = {};
-
     materiales.forEach((mat) => {
       if (!grupo[mat.categoria]) grupo[mat.categoria] = {};
       if (!grupo[mat.categoria][mat.subcategoria])
         grupo[mat.categoria][mat.subcategoria] = [];
-
       grupo[mat.categoria][mat.subcategoria].push(mat);
     });
-
     return grupo;
   };
 
   const groupedData = groupByCategoria();
 
   // ================================
-  // FILTROS APLICADOS
+  // FILTROS
   // ================================
-  const filtrarMateriales = (lista) => {
-    return lista.filter((m) => {
+  const filtrarMateriales = (lista) =>
+    lista.filter((m) => {
       const pasaTipo = filtroTipo === "Todos" || m.tipo === filtroTipo;
-      const pasaPrioridad = filtroPrioridad === "Todas" || m.prioridad === filtroPrioridad;
-      const pasaSub = filtroSubcategoria === "Todas" || m.subcategoria === filtroSubcategoria;
+      const pasaPrioridad =
+        filtroPrioridad === "Todas" || m.prioridad === filtroPrioridad;
+      const pasaSub =
+        filtroSubcategoria === "Todas" || m.subcategoria === filtroSubcategoria;
       const pasaNombre = m.nombre.toLowerCase().includes(search.toLowerCase());
 
       return pasaTipo && pasaPrioridad && pasaSub && pasaNombre;
     });
-  };
 
   // ================================
-  // ELIMINAR
+  // ELIMINAR MATERIAL (REAL)
   // ================================
   const eliminarMaterial = async () => {
     if (!materialToDelete) return;
 
-    const res = await fetch(`${API_URL}/${materialToDelete._id}`, {
-      method: "DELETE",
-    });
+    try {
+      const res = await fetch(`${API_URL}/${materialToDelete._id}`, {
+        method: "DELETE",
+      });
 
-    if (res.ok) {
-      fetchMateriales();
+      if (res.ok) {
+        await fetchMateriales();
+      }
+    } catch (err) {
+      console.error("Error eliminando material:", err);
+    } finally {
+      setDeleteModalOpen(false);
+      setMaterialToDelete(null);
     }
-
-    setDeleteModalOpen(false);
   };
 
   if (loading) return <p>Cargando...</p>;
 
-  // Opciones dinámicas
   const tipos = [...new Set(materiales.map((m) => m.tipo))];
   const subcategorias = [...new Set(materiales.map((m) => m.subcategoria))];
 
@@ -140,10 +142,9 @@ export default function Almacen() {
       <div className={styles.almacenPage}>
         {/* BUSCADOR */}
         <div className={styles.searchBox}>
-          <Search size={18} className={styles.searchIcon} />
+          <Search size={18} />
           <input
-            type="text"
-            placeholder="Buscar Material..."
+            placeholder="Buscar material..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -151,14 +152,11 @@ export default function Almacen() {
 
         {/* FILTROS */}
         <div className={styles.filters}>
-
-          {/* FILTRO TIPO */}
           <button
-            className={`${styles.filterBtn} ${openTipo ? styles.active : ""}`}
+            className={styles.filterBtn}
             onClick={(e) => openDropdown(e, setOpenTipo)}
           >
-            {filtroTipo}
-            <ChevronDown size={16} />
+            {filtroTipo} <ChevronDown size={16} />
           </button>
 
           {openTipo && (
@@ -172,31 +170,28 @@ export default function Almacen() {
             </div>
           )}
 
-          {/* FILTRO PRIORIDAD */}
           <button
-            className={`${styles.filterBtn} ${openPrioridad ? styles.active : ""}`}
+            className={styles.filterBtn}
             onClick={(e) => openDropdown(e, setOpenPrioridad)}
           >
-            {filtroPrioridad}
-            <ChevronDown size={16} />
+            {filtroPrioridad} <ChevronDown size={16} />
           </button>
 
           {openPrioridad && (
             <div className={styles.dropdownMenu}>
-              <div onClick={() => setFiltroPrioridad("Todas")}>Todas</div>
-              <div onClick={() => setFiltroPrioridad("Alta")}>Alta</div>
-              <div onClick={() => setFiltroPrioridad("Media")}>Media</div>
-              <div onClick={() => setFiltroPrioridad("Baja")}>Baja</div>
+              {["Todas", "Alta", "Media", "Baja"].map((p) => (
+                <div key={p} onClick={() => setFiltroPrioridad(p)}>
+                  {p}
+                </div>
+              ))}
             </div>
           )}
 
-          {/* FILTRO SUBCATEGORÍA */}
           <button
-            className={`${styles.filterBtn} ${openSubcategoria ? styles.active : ""}`}
+            className={styles.filterBtn}
             onClick={(e) => openDropdown(e, setOpenSubcategoria)}
           >
-            {filtroSubcategoria}
-            <ChevronDown size={16} />
+            {filtroSubcategoria} <ChevronDown size={16} />
           </button>
 
           {openSubcategoria && (
@@ -210,110 +205,100 @@ export default function Almacen() {
             </div>
           )}
 
-          {/* AÑADIR MATERIAL */}
           <button className={styles.addBtn} onClick={() => setShowAddModal(true)}>
-            <Plus size={18} />
-            Añadir Material
+            <Plus size={18} /> Añadir Material
           </button>
         </div>
 
-        {/* CATEGORÍAS Y SUBCATEGORÍAS */}
+        {/* TABLAS */}
         {Object.keys(groupedData).map((categoria) => (
-          <div key={categoria} className={styles.categoryBlock}>
+          <div key={categoria}>
             <h2 className={styles.categoryTitle}>{categoria}</h2>
 
             {Object.keys(groupedData[categoria]).map((sub) => {
               const mats = filtrarMateriales(groupedData[categoria][sub]);
+              if (!mats.length) return null;
 
               return (
-                <div key={sub} className={styles.subCategorySection}>
-                  <h3 className={styles.subCatTitle}>{sub}</h3>
+                <table key={sub} className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Imagen</th>
+                      <th>Material</th>
+                      <th>Stock Min</th>
+                      <th>Prioridad</th>
+                      <th>Cantidad</th>
+                      <th>Tipo</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
 
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>Imagen</th>
-                        <th>Material</th>
-                        <th>Stock Mínimo</th>
-                        <th>Prioridad</th>
-                        <th>Cantidad</th>
-                        <th>Tipo</th>
-                        <th>Acción</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {mats.map((mat) => (
-                        <tr key={mat._id} className={styles.fadeInRow}>
-                          <td>
+                  <tbody>
+                    {mats.map((mat) => (
+                      <tr key={mat._id}>
+                        <td>
+                          <div className={styles.fadeInRow}>
                             <img src={mat.fotoUrl} className={styles.imgThumb} />
-                          </td>
+                          </div>
+                        </td>
+                        <td>{mat.nombre}</td>
+                        <td>{mat.stockMinimo}</td>
+                        <td>
+                          <span
+                            className={`${styles.priority} ${
+                              styles[mat.prioridad.toLowerCase()]
+                            }`}
+                          >
+                            {mat.prioridad}
+                          </span>
+                        </td>
+                        <td>{mat.cantidad}</td>
+                        <td>{mat.tipo}</td>
+                        <td className={styles.actions}>
+                          <button
+                            className={styles.delete}
+                            onClick={() => {
+                              setMaterialToDelete(mat);
+                              setDeleteModalOpen(true);
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
 
-                          <td>{mat.nombre}</td>
-                          <td>{mat.stockMinimo}</td>
-
-                          <td>
-                            <span className={`${styles.priority} ${styles[mat.prioridad.toLowerCase()]}`}>
-                              {mat.prioridad}
-                            </span>
-                          </td>
-
-                          <td>{mat.cantidad}</td>
-                          <td>{mat.tipo}</td>
-
-                          <td className={styles.actions}>
-                            {/* ELIMINAR */}
-                            <button
-                              className={styles.delete}
-                              onClick={() => {
-                                setMaterialToDelete(mat);
-                                setDeleteModalOpen(true);
-                              }}
-                            >
-                              <Trash2 size={16} />
-                            </button>
-
-                            {/* EDITAR */}
-                            <button
-                              className={styles.update}
-                              onClick={() => {
-                                setMaterialToEdit(mat);
-                                setEditModalOpen(true);
-                              }}
-                            >
-                              <Edit size={16} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          <button
+                            className={styles.update}
+                            onClick={() => {
+                              setMaterialToEdit(mat);
+                              setEditModalOpen(true);
+                            }}
+                          >
+                            <Edit size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               );
             })}
           </div>
         ))}
       </div>
 
-      {/* MODAL CREAR */}
+      {/* MODALES */}
       <AddMaterialModal
         open={showAddModal}
         onClose={() => setShowAddModal(false)}
         onSaved={fetchMateriales}
       />
 
-     <EditMaterialModal
-  open={editModalOpen}
-  material={materialToEdit}
-  onClose={() => {
-    setEditModalOpen(false);
-    setMaterialToEdit(null);
-  }}
-  onSaved={fetchMateriales}
-   />
+      <EditMaterialModal
+        open={editModalOpen}
+        material={materialToEdit}
+        onClose={() => setEditModalOpen(false)}
+        onSaved={fetchMateriales}
+      />
 
-
-      {/* MODAL ELIMINAR */}
       <ConfirmDeleteModal
         open={deleteModalOpen}
         material={materialToDelete}

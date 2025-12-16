@@ -1,27 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../css/confirmDelete.module.css";
 import { X } from "lucide-react";
 
-export default function ConfirmDeleteModal({ open, onClose, material, onConfirm }) {
-  if (!open) return null;
-
+export default function ConfirmDeleteModal({
+  open,
+  onClose,
+  material,
+  onConfirm,
+}) {
+  // ✅ Hooks SIEMPRE arriba
   const [input, setInput] = useState("");
+  const [error, setError] = useState(false);
+
+  // 🔄 Reset cuando se abre
+  useEffect(() => {
+    if (open) {
+      setInput("");
+      setError(false);
+    }
+  }, [open]);
+
+  // ⛔ Render condicional DESPUÉS de hooks
+  if (!open || !material) return null;
 
   const handleDelete = () => {
     if (input !== material.nombre) {
-      alert("❌ El nombre no coincide.");
+      setError(true);
       return;
     }
+
     onConfirm();
     onClose();
   };
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.modal}>
-        
+      <div
+        className={`${styles.modal} ${error ? styles.shake : ""}`}
+      >
         <button className={styles.closeBtn} onClick={onClose}>
           <X size={20} />
         </button>
@@ -29,7 +47,7 @@ export default function ConfirmDeleteModal({ open, onClose, material, onConfirm 
         <h2 className={styles.title}>¿Eliminar este material?</h2>
 
         <p className={styles.text}>
-          Para confirmar, escribe el nombre del material:
+          Para confirmar, escribe el nombre exacto del material:
         </p>
 
         <p className={styles.materialName}>
@@ -37,11 +55,20 @@ export default function ConfirmDeleteModal({ open, onClose, material, onConfirm 
         </p>
 
         <input
-          className={styles.input}
+          className={`${styles.input} ${error ? styles.inputError : ""}`}
           placeholder="Escribe el nombre EXACTO"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            setError(false);
+          }}
         />
+
+        {error && (
+          <p className={styles.errorText}>
+            ❌ El nombre no coincide
+          </p>
+        )}
 
         <div className={styles.buttons}>
           <button className={styles.cancelBtn} onClick={onClose}>
@@ -52,7 +79,6 @@ export default function ConfirmDeleteModal({ open, onClose, material, onConfirm 
             Eliminar
           </button>
         </div>
-
       </div>
     </div>
   );

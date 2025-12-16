@@ -6,6 +6,7 @@ import * as echarts from "echarts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+
 /* ---------------------------------------------------------
    FIX PREMIUM — Componente reusable seguro para ECharts
 --------------------------------------------------------- */
@@ -70,32 +71,93 @@ export default function Dashboard({ projectId }) {
   const [estimado, setEstimado] = useState(0);
   const [real, setReal] = useState(0);
   const [avanceGeneral, setAvanceGeneral] = useState(0);
+  const weekInputRef = useRef(null);
+  // 🔥 FILTRO POR AÑO
+const currentYear = new Date().getFullYear();
+const [selectedYear, setSelectedYear] = useState(currentYear);
+// 🔥 AÑOS DISPONIBLES (dinámico)
+const startYear = 2020; // ⬅️ cambia este por el año real donde empezó tu proyecto
+const endYear = new Date().getFullYear();
+
+const years = Array.from(
+  { length: endYear - startYear + 1 },
+  (_, i) => endYear - i
+);
+
+
+  /* ---------------------------------------------------------
+     FILTRO POR SEMANA (UI)
+  --------------------------------------------------------- */
+  const getCurrentWeekValue = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+
+    const start = new Date(year, 0, 1);
+    const day = Math.floor((now - start) / 86400000) + 1;
+
+    // ISO-ish week number (suficiente para input type="week")
+    const week = Math.ceil((day + start.getDay()) / 7);
+    return `${year}-W${String(week).padStart(2, "0")}`;
+  };
+
+  const [selectedWeek, setSelectedWeek] = useState(getCurrentWeekValue());
+
+  // ✅ NUEVO: mostrar/ocultar picker nativo (pero con UI pro)
+  const [showWeekPicker, setShowWeekPicker] = useState(false);
+
+  // Si semanas viene como {Lun,Mar,...} usamos eso (tu caso actual).
+  // Si en el futuro semanas viene como { "2025-W03": {Lun...}, ... } usamos selectedWeek.
+  const semanasFiltradas = useMemo(() => {
+    if (!semanas) return {};
+    const keys = Object.keys(semanas);
+
+    if (keys.includes("Lun") || keys.includes("Mar") || keys.includes("Mie")) {
+      return semanas; // backend actual
+    }
+
+    return semanas[selectedWeek] || {}; // backend futuro con historial por semana
+  }, [semanas, selectedWeek]);
 
   /* ---------------------------------------------------------
      1. Cargar Dashboard Backend Real
+     ✅ CORREGIDO: depende de selectedWeek
+     ✅ CORREGIDO: manda ?week=YYYY-Wxx
   --------------------------------------------------------- */
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/${projectId}`
-        );
+  if (!projectId) return;
 
-        const data = await res.json();
+  const controller = new AbortController();
 
-        setEtapas(data.avanceEtapas || {});
-        setMeses(data.avanceMes || {});
-        setSemanas(data.avanceSemana || {});
-        setEstimado(data.estimado || 0);
-        setReal(data.realGlobal || 0);
-        setAvanceGeneral(data.realGlobal || 0);
-      } catch (err) {
+  const fetchDashboard = async () => {
+    try {
+      const query = `?week=${encodeURIComponent(selectedWeek)}&year=${selectedYear}`;
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/${projectId}${query}`,
+        {
+          cache: "no-store",
+          signal: controller.signal,
+        }
+      );
+
+      const data = await res.json();
+
+      setEtapas(data.avanceEtapas || {});
+      setMeses(data.avanceMes || {});
+      setSemanas(data.avanceSemana || {});
+      setEstimado(data.estimado || 0);
+      setReal(data.realGlobal || 0);
+      setAvanceGeneral(data.realGlobal || 0);
+    } catch (err) {
+      if (err.name !== "AbortError") {
         console.error("Error cargando dashboard:", err);
       }
-    };
+    }
+  };
 
-    fetchDashboard();
-  }, [projectId]);
+  fetchDashboard();
+  return () => controller.abort();
+}, [projectId, selectedWeek, selectedYear]);
 
   /* ---------------------------------------------------------
      2. Cargar Materiales
@@ -141,9 +203,7 @@ export default function Dashboard({ projectId }) {
 
     materiales.forEach((m) => {
       if (!grupos[m.categoria]) grupos[m.categoria] = {};
-      if (!grupos[m.categoria][m.subcategoria])
-        grupos[m.categoria][m.subcategoria] = [];
-
+      if (!grupos[m.categoria][m.subcategoria]) grupos[m.categoria][m.subcategoria] = [];
       grupos[m.categoria][m.subcategoria].push(m);
     });
 
@@ -177,10 +237,7 @@ export default function Dashboard({ projectId }) {
           head: [["Material", "Tipo", "Stock Total", "Stock Mínimo"]],
           body: rows,
           theme: "striped",
-          headStyles: {
-            fillColor: [0, 102, 204],
-            textColor: 255,
-          },
+          headStyles: { fillColor: [0, 102, 204], textColor: 255 },
           alternateRowStyles: { fillColor: [235, 242, 255] },
         });
       });
@@ -339,7 +396,7 @@ export default function Dashboard({ projectId }) {
         borderWidth: 1,
         textStyle: { color: "#fff" },
         formatter: (p) =>
-          `<b>${p[0].axisValue}</b><br/>Avance: <b>${p[0].data}%</b>`,
+  `<b>${p[0].axisValue} ${selectedYear}</b><br/>Avance: <b>${p[0].data}%</b>`
       },
 
       grid: { left: 40, right: 20, top: 30, bottom: 40 },
@@ -380,7 +437,7 @@ export default function Dashboard({ projectId }) {
   }, [meses]);
 
   /* ---------------------------------------------------------
-     7. Avance por semana
+     7. Avance por semana (con filtro UI)
   --------------------------------------------------------- */
   const semanaOption = useMemo(() => {
     const dias = ["Lun","Mar","Mie","Jue","Vie","Sab","Dom"];
@@ -417,7 +474,7 @@ export default function Dashboard({ projectId }) {
       series: [
         {
           type: "bar",
-          data: dias.map((d) => semanas[d] || 0),
+          data: dias.map((d) => semanasFiltradas[d] || 0),
           barWidth: 22,
           itemStyle: {
             borderRadius: [8, 8, 0, 0],
@@ -429,7 +486,7 @@ export default function Dashboard({ projectId }) {
         },
       ],
     };
-  }, [semanas]);
+  }, [semanasFiltradas]);
 
   /* ---------------------------------------------------------
      8. Reportes del proyecto
@@ -450,7 +507,7 @@ export default function Dashboard({ projectId }) {
         formatter: (p) => {
           const etapa = p[0].axisValue;
           const avance = p[0].data;
-          const reportes = Math.round(avance / 10); // ejemplo
+          const reportes = Math.round(avance / 10);
 
           return `
             <b>${etapa}</b><br/>
@@ -538,10 +595,10 @@ export default function Dashboard({ projectId }) {
   return (
     <div className={styles.dashboardWrapper}>
       <div className={styles.dashboardContent}>
-        
+
         {/* FILA 1 */}
         <section className={styles.topSection}>
-          
+
           {/* MATERIALES */}
           <article className={styles.card}>
             <h2 className={styles.cardTitle}>Materiales (Prioridad Alta)</h2>
@@ -567,10 +624,29 @@ export default function Dashboard({ projectId }) {
 
         {/* FILA 2 */}
         <section className={styles.middleSection}>
-          
+
           {/* MES */}
           <article className={styles.card}>
             <h2 className={styles.cardTitle}>Avance por Mes</h2>
+            <select
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(Number(e.target.value))}
+  style={{
+    marginBottom: 10,
+    padding: "10px 14px",
+    borderRadius: 12,
+    background: "rgba(255,255,255,0.08)",
+    color: "#fff",
+    border: "1px solid rgba(255,255,255,0.2)",
+  }}
+>
+  {years.map((year) => (
+    <option key={year} value={year} style={{ color: "#000" }}>
+      {year}
+    </option>
+  ))}
+</select>
+
             <div className={styles.chartBox}>
               <EChartBox option={mesesOption} />
             </div>
@@ -579,6 +655,75 @@ export default function Dashboard({ projectId }) {
           {/* SEMANA */}
           <article className={styles.card}>
             <h2 className={styles.cardTitle}>Avance por Semana</h2>
+
+            {/* ✅ FILTRO CON ESTILO PRO (BOTÓN) + PICKER NATIVO */}
+            <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10 }}>
+              <button
+  type="button"
+  onClick={() => {
+    setShowWeekPicker(true);
+    setTimeout(() => {
+      weekInputRef.current?.showPicker?.(); // Chrome / Edge
+      weekInputRef.current?.focus();        // fallback
+    }, 0);
+  }}
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "10px 14px",
+    borderRadius: 14,
+    background:
+      "linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",
+    border: "1px solid rgba(255,255,255,0.18)",
+    color: "#e6faff",
+    fontSize: 14,
+    fontWeight: 500,
+    cursor: "pointer",
+  }}
+>
+  Semana {selectedWeek.split("-W")[1]} · {selectedWeek.split("-W")[0]}
+</button>
+
+
+              <button
+                type="button"
+                onClick={() => setSelectedWeek(getCurrentWeekValue())}
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: 14,
+                  background:
+                    "linear-gradient(135deg, rgba(0, 207, 255, 0.35), rgba(0, 140, 255, 0.35))",
+                  border: "none",
+                  color: "#fff",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+                title="Volver a semana actual"
+              >
+                Actual
+              </button>
+
+              {/* input real (nativo) oculto, pero funcional */}
+              <input
+  ref={weekInputRef}
+  type="week"
+  value={selectedWeek}
+  onChange={(e) => {
+    setSelectedWeek(e.target.value);
+    setShowWeekPicker(false);
+  }}
+  style={{
+    position: "absolute",
+    opacity: 0,
+    width: 0,
+    height: 0,
+  }}
+/>
+
+            </div>
+
             <div className={styles.chartBox}>
               <EChartBox option={semanaOption} />
             </div>
@@ -588,7 +733,7 @@ export default function Dashboard({ projectId }) {
 
         {/* FILA 3 */}
         <section className={styles.bottomSection}>
-          
+
           {/* REPORTES */}
           <article className={styles.cardLarge}>
             <h2 className={styles.cardTitle}>Reportes del Proyecto</h2>
